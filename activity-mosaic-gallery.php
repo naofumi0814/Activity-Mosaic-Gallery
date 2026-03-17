@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMG_VERSION', '1.0.0' );
+define( 'AMG_VERSION', '1.1.0' );
 define( 'AMG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AMG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -60,6 +60,9 @@ final class Activity_Mosaic_Gallery {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_front_assets' ) );
 		add_action( 'wp_footer', array( $this, 'maybe_enqueue_front_assets' ) );
+
+		// wpautop がショートコード出力の <div> を <p> で囲むのを防止
+		add_filter( 'the_content', array( $this, 'fix_shortcode_wpautop' ), 8 );
 
 		AMG_Shortcode::init();
 	}
@@ -130,6 +133,23 @@ final class Activity_Mosaic_Gallery {
 	 */
 	public function set_has_gallery() {
 		$this->has_gallery = true;
+	}
+
+	/**
+	 * wpautop がショートコード出力を <p> で囲むのを防止
+	 *
+	 * WordPress の wpautop フィルターは priority 10 で動作するため、
+	 * priority 8 でショートコード前後の余計な改行を除去し、
+	 * <p><div> のような不正な入れ子を防ぐ。
+	 *
+	 * @param string $content 投稿本文
+	 * @return string 修正済み本文
+	 */
+	public function fix_shortcode_wpautop( $content ) {
+		// ショートコード前後の改行・空白を除去して wpautop の <p> 囲みを防止
+		$content = preg_replace( '/\s*(\[activity_gallery\s)/', "\n\n$1", $content );
+		$content = preg_replace( '/(\[activity_gallery[^\]]*\])\s*/', "$1\n\n", $content );
+		return $content;
 	}
 
 	/**

@@ -1,53 +1,73 @@
 /**
  * Activity Mosaic Gallery - フロントエンドスタイル
  *
- * JS Masonry による absolute positioning レイアウト
- * 画像ごとの縦横比を保持し、隙間の少ない密な配置を実現
+ * 行ベースの Justified Layout（Flickr/Google Photos 風）
+ * 各行がコンテナ幅いっぱいに埋まり、隙間のない密なレイアウトを実現
  */
+
+/* ===== テーマ干渉リセット ===== */
+.amg-gallery,
+.amg-gallery *,
+.amg-gallery *::before,
+.amg-gallery *::after {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	box-sizing: border-box;
+	line-height: 0;
+	font-size: 0;
+	text-decoration: none;
+	outline: none;
+	box-shadow: none;
+	border-radius: 0;
+}
 
 /* ギャラリーコンテナ: JS が absolute 配置するため position: relative */
 .amg-gallery {
 	position: relative;
-	margin: 1.5em 0;
-	padding: 0;
-	line-height: 0;
-	font-size: 0;
+	margin: 1em 0;
+	padding: 0 !important;
+	overflow: hidden;
 }
 
-/* 各画像アイテム: JS で position/top/left/width を制御 */
+/* 各画像アイテム: JS で position/top/left/width/height を制御 */
 .amg-item {
 	position: absolute;
-	margin: 0;
-	padding: 0;
 	overflow: hidden;
-	line-height: 0;
-	font-size: 0;
+	top: 0;
+	left: 0;
 }
 
 /* レイアウト計算前は非表示（FOUC 防止） */
+.amg-gallery:not(.amg-laid-out) {
+	min-height: 200px;
+}
+
 .amg-gallery:not(.amg-laid-out) .amg-item {
-	position: absolute;
 	visibility: hidden;
 }
 
 .amg-item img {
 	display: block;
 	width: 100%;
-	height: auto;
-	margin: 0;
-	padding: 0;
-	border: 0;
+	height: 100%;
+	object-fit: cover;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+	max-width: none;
 	transition: opacity 0.2s ease;
 }
 
 .amg-link {
 	display: block;
+	width: 100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
-	text-decoration: none;
 	cursor: pointer;
-	line-height: 0;
-	font-size: 0;
 }
 
 .amg-link:hover img {
@@ -63,9 +83,8 @@
 	padding: 6px 8px;
 	background: rgba(0, 0, 0, 0.55);
 	color: #fff;
-	font-size: 12px;
-	line-height: 1.4;
-	margin: 0;
+	font-size: 12px !important;
+	line-height: 1.4 !important;
 	opacity: 0;
 	transition: opacity 0.2s ease;
 }
@@ -89,13 +108,14 @@
 	justify-content: center;
 	opacity: 0;
 	transition: opacity 0.25s ease;
+	line-height: normal;
+	font-size: 14px;
 }
 
 .amg-lightbox-overlay.amg-active {
 	opacity: 1;
 }
 
-/* ライトボックス画像コンテナ */
 .amg-lightbox-content {
 	position: relative;
 	max-width: 90vw;
@@ -108,12 +128,13 @@
 .amg-lightbox-content img {
 	max-width: 90vw;
 	max-height: 85vh;
+	width: auto;
+	height: auto;
 	display: block;
 	object-fit: contain;
 	user-select: none;
 }
 
-/* ライトボックスボタン共通 */
 .amg-lb-btn {
 	position: fixed;
 	background: rgba(0, 0, 0, 0.5);
@@ -137,7 +158,6 @@
 	background: rgba(255, 255, 255, 0.25);
 }
 
-/* 閉じるボタン */
 .amg-lb-close {
 	top: 15px;
 	right: 15px;
@@ -147,7 +167,6 @@
 	font-size: 24px;
 }
 
-/* 前へ・次へ */
 .amg-lb-prev,
 .amg-lb-next {
 	top: 50%;
@@ -166,7 +185,6 @@
 	right: 12px;
 }
 
-/* 下部ツールバー */
 .amg-lb-toolbar {
 	position: fixed;
 	bottom: 15px;
@@ -178,14 +196,12 @@
 	z-index: 1000000;
 }
 
-/* カウンター */
 .amg-lb-counter {
 	color: rgba(255, 255, 255, 0.8);
 	font-size: 14px;
 	font-family: Arial, sans-serif;
 }
 
-/* ダウンロードボタン */
 .amg-lb-download {
 	display: inline-flex;
 	align-items: center;
@@ -196,6 +212,7 @@
 	padding: 8px 16px;
 	border-radius: 4px;
 	font-size: 14px;
+	line-height: 1;
 	font-family: Arial, sans-serif;
 	transition: background 0.2s ease;
 }
