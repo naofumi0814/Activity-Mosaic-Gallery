@@ -118,8 +118,9 @@ class AMG_Shortcode {
 				esc_attr( $alt_text )
 			);
 
+			// loading="lazy" はレイアウト計算に必要な画像読み込みを遅延させるため使用しない
 			$output .= sprintf(
-				'<img src="%s" alt="%s" width="%d" height="%d" loading="lazy" decoding="async" />',
+				'<img src="%s" alt="%s" width="%d" height="%d" decoding="async" />',
 				esc_url( $thumb_src[0] ),
 				esc_attr( $alt_text ),
 				(int) $thumb_width,

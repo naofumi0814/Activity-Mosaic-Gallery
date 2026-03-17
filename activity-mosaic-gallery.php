@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMG_VERSION', '1.1.0' );
+define( 'AMG_VERSION', '1.2.0' );
 define( 'AMG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AMG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 

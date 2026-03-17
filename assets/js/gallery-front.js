@@ -210,6 +210,16 @@
 				if (loaded === total) {
 					Justified.layout($gallery);
 				}
+
+				// フォールバック: 500ms 後に再レイアウト（load イベントが発火しないケースに備える）
+				setTimeout(function () {
+					Justified.layout($gallery);
+				}, 500);
+
+				// 追加フォールバック: 2秒後にも再レイアウト（遅い回線対応）
+				setTimeout(function () {
+					Justified.layout($gallery);
+				}, 2000);
 			});
 
 			// ウィンドウリサイズ時に再レイアウト（デバウンス付き）

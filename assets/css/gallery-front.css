@@ -47,30 +47,41 @@
 	visibility: hidden;
 }
 
-.amg-item img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+/*
+ * 画像スタイル
+ * テーマが section.news_list img { max-width:70%; margin:0 auto; } のような
+ * ルールを持つ場合があるため、高い詳細度 + !important で確実に上書きする
+ */
+.amg-gallery .amg-item img {
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	max-width: none !important;
+	min-width: 0 !important;
+	max-height: none !important;
+	object-fit: cover !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	border: 0 !important;
 	border-radius: 0 !important;
 	box-shadow: none !important;
-	max-width: none;
+	float: none !important;
+	position: static !important;
 	transition: opacity 0.2s ease;
 }
 
-.amg-link {
-	display: block;
-	width: 100%;
-	height: 100%;
-	margin: 0;
-	padding: 0;
+.amg-gallery .amg-link {
+	display: block !important;
+	width: 100% !important;
+	height: 100% !important;
+	margin: 0 !important;
+	padding: 0 !important;
 	cursor: pointer;
+	text-decoration: none !important;
+	border: 0 !important;
 }
 
-.amg-link:hover img {
+.amg-gallery .amg-link:hover img {
 	opacity: 0.85;
 }
 
