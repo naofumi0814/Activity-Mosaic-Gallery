@@ -81,10 +81,8 @@ class AMG_Shortcode {
 
 			// サムネイル用画像（一覧表示）
 			$thumb_src = wp_get_attachment_image_src( $id, $size );
-			// フルサイズ画像（ライトボックス・ダウンロード用）
+			// フルサイズ画像（ライトボックス・ダウンロード・ズーム用）
 			$full_src = wp_get_attachment_image_src( $id, 'full' );
-			// large サイズ（ライトボックス表示用）
-			$large_src = wp_get_attachment_image_src( $id, 'large' );
 
 			if ( ! $thumb_src || ! $full_src ) {
 				continue;
@@ -95,9 +93,8 @@ class AMG_Shortcode {
 			$title   = get_the_title( $id );
 			$alt_text = $alt ? $alt : $title;
 
-			// ライトボックス用はlarge、ダウンロード用はfull
-			$lightbox_url  = $large_src ? $large_src[0] : $full_src[0];
-			$download_url  = $full_src[0];
+			// ライトボックス・ダウンロード・ズームすべてフルサイズを使用
+			$full_url = $full_src[0];
 			$thumb_width   = $thumb_src[1];
 			$thumb_height  = $thumb_src[2];
 
@@ -112,8 +109,8 @@ class AMG_Shortcode {
 
 			$output .= sprintf(
 				'<a href="%s" class="amg-link" data-full="%s" data-gallery="%s" title="%s">',
-				esc_url( $lightbox_url ),
-				esc_url( $download_url ),
+				esc_url( $full_url ),
+				esc_url( $full_url ),
 				esc_attr( $gallery_id ),
 				esc_attr( $alt_text )
 			);

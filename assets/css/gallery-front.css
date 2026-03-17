@@ -134,6 +134,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	transition: transform 0.15s ease;
 }
 
 .amg-lightbox-content img {
@@ -144,6 +145,54 @@
 	display: block;
 	object-fit: contain;
 	user-select: none;
+	cursor: zoom-in;
+}
+
+/* ===== ズームモード ===== */
+
+/* ズーム中: 画像を実サイズ表示、パン可能 */
+.amg-zoomed .amg-lightbox-content {
+	max-width: none;
+	max-height: none;
+	overflow: visible;
+}
+
+.amg-zoomed .amg-lightbox-content img {
+	max-width: none;
+	max-height: none;
+	width: auto;
+	height: auto;
+	cursor: grab;
+}
+
+/* ドラッグ中のカーソル */
+.amg-lightbox-content.amg-grabbing img {
+	cursor: grabbing;
+}
+
+/* ズーム中は前へ/次へを非表示（パン操作と競合するため） */
+.amg-zoomed .amg-lb-prev,
+.amg-zoomed .amg-lb-next {
+	display: none;
+}
+
+/* ズームボタン */
+.amg-lb-zoom {
+	position: static !important;
+	width: 36px;
+	height: 36px;
+	border-radius: 4px;
+}
+
+.amg-lb-zoom-icon {
+	display: block;
+	width: 18px;
+	height: 18px;
+}
+
+/* ズーム中はボタンにアクティブ表示 */
+.amg-zoomed .amg-lb-zoom {
+	background: rgba(255, 255, 255, 0.3);
 }
 
 .amg-lb-btn {

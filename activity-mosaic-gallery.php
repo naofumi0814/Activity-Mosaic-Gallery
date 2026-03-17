@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMG_VERSION', '1.2.0' );
+define( 'AMG_VERSION', '1.3.0' );
 define( 'AMG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AMG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -124,6 +124,7 @@ final class Activity_Mosaic_Gallery {
 			'next'     => __( '次へ', 'activity-mosaic-gallery' ),
 			'close'    => __( '閉じる', 'activity-mosaic-gallery' ),
 			'download' => __( 'ダウンロード', 'activity-mosaic-gallery' ),
+			'zoom'     => __( 'ズーム', 'activity-mosaic-gallery' ),
 			'counter'  => __( '%current% / %total%', 'activity-mosaic-gallery' ),
 		) );
 	}
