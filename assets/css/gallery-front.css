@@ -1,43 +1,53 @@
 /**
  * Activity Mosaic Gallery - フロントエンドスタイル
  *
- * CSS Columns ベースの Masonry 風レイアウト
+ * JS Masonry による absolute positioning レイアウト
  * 画像ごとの縦横比を保持し、隙間の少ない密な配置を実現
  */
 
-/* ギャラリーコンテナ */
+/* ギャラリーコンテナ: JS が absolute 配置するため position: relative */
 .amg-gallery {
-	column-count: var(--amg-columns, 4);
-	column-gap: var(--amg-gap, 2px);
-	line-height: 0;
+	position: relative;
 	margin: 1.5em 0;
+	padding: 0;
+	line-height: 0;
+	font-size: 0;
 }
 
-/* 各画像アイテム */
+/* 各画像アイテム: JS で position/top/left/width を制御 */
 .amg-item {
-	display: inline-block;
-	width: 100%;
-	margin: 0 0 var(--amg-gap, 2px) 0;
+	position: absolute;
+	margin: 0;
 	padding: 0;
-	break-inside: avoid;
 	overflow: hidden;
-	position: relative;
 	line-height: 0;
+	font-size: 0;
+}
+
+/* レイアウト計算前は非表示（FOUC 防止） */
+.amg-gallery:not(.amg-laid-out) .amg-item {
+	position: absolute;
+	visibility: hidden;
 }
 
 .amg-item img {
 	display: block;
 	width: 100%;
 	height: auto;
-	object-fit: contain;
+	margin: 0;
+	padding: 0;
+	border: 0;
 	transition: opacity 0.2s ease;
 }
 
 .amg-link {
 	display: block;
+	margin: 0;
+	padding: 0;
 	text-decoration: none;
 	cursor: pointer;
 	line-height: 0;
+	font-size: 0;
 }
 
 .amg-link:hover img {
@@ -62,19 +72,6 @@
 
 .amg-item:hover .amg-caption {
 	opacity: 1;
-}
-
-/* レスポンシブ: タブレット */
-@media (max-width: 1024px) {
-	.amg-gallery {
-		column-count: 3;
-	}
-}
-
-@media (max-width: 768px) {
-	.amg-gallery {
-		column-count: 2;
-	}
 }
 
 /* ===== ライトボックス ===== */

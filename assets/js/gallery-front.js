@@ -1,11 +1,149 @@
 /**
  * Activity Mosaic Gallery - フロントエンドスクリプト
  *
- * jQuery ベースの軽量ライトボックス
+ * 独自軽量 Masonry レイアウト + jQuery ベースの軽量ライトボックス
  * キーボード操作・スワイプ対応
  */
 (function ($) {
 	'use strict';
+
+	/* =============================
+	 * Masonry レイアウトエンジン
+	 *
+	 * 各列の高さを追跡し、最も短い列に次のアイテムを配置する。
+	 * これにより CSS Columns のような列末尾の空白問題を回避し、
+	 * 全体が密に詰まったレイアウトを実現する。
+	 * ============================= */
+
+	var Masonry = {
+
+		/**
+		 * ギャラリーをレイアウト
+		 *
+		 * @param {jQuery} $gallery ギャラリーコンテナ
+		 */
+		layout: function ($gallery) {
+			var columns = parseInt($gallery.data('columns'), 10) || 4;
+			var gap = parseInt($gallery.data('gap'), 10) || 2;
+			var containerWidth = $gallery.width();
+
+			if (containerWidth <= 0) return;
+
+			// レスポンシブ列数調整
+			if (containerWidth <= 480) {
+				columns = 2;
+			} else if (containerWidth <= 768) {
+				columns = Math.min(columns, 3);
+			} else if (containerWidth <= 1024) {
+				columns = Math.min(columns, Math.max(3, columns));
+			}
+
+			var colWidth = (containerWidth - gap * (columns - 1)) / columns;
+			// 各列の現在の高さを追跡する配列
+			var colHeights = [];
+			var i;
+			for (i = 0; i < columns; i++) {
+				colHeights.push(0);
+			}
+
+			var $items = $gallery.children('.amg-item');
+
+			$items.each(function () {
+				var $item = $(this);
+				var ratio = parseFloat($item.data('ratio')) || 1;
+
+				// 最も短い列を見つける
+				var minHeight = colHeights[0];
+				var minCol = 0;
+				for (i = 1; i < columns; i++) {
+					if (colHeights[i] < minHeight) {
+						minHeight = colHeights[i];
+						minCol = i;
+					}
+				}
+
+				// 位置を計算
+				var left = minCol * (colWidth + gap);
+				var itemHeight = colWidth / ratio;
+
+				$item.css({
+					position: 'absolute',
+					left: left + 'px',
+					top: minHeight + 'px',
+					width: colWidth + 'px'
+				});
+
+				// 列の高さを更新（gap を加算）
+				colHeights[minCol] = minHeight + itemHeight + gap;
+			});
+
+			// コンテナの高さを最も高い列に合わせる
+			var maxHeight = 0;
+			for (i = 0; i < columns; i++) {
+				if (colHeights[i] > maxHeight) {
+					maxHeight = colHeights[i];
+				}
+			}
+			// 最後の gap 分を引く（末尾余白不要）
+			$gallery.css('height', Math.max(0, maxHeight - gap) + 'px');
+
+			// レイアウト完了フラグ（FOUC 防止用 CSS と連動）
+			$gallery.addClass('amg-laid-out');
+		},
+
+		/**
+		 * 全ギャラリーを再レイアウト
+		 */
+		relayoutAll: function () {
+			$('.amg-gallery').each(function () {
+				Masonry.layout($(this));
+			});
+		},
+
+		/**
+		 * 初期化: 画像読み込み完了を待ってレイアウト実行
+		 */
+		init: function () {
+			$('.amg-gallery').each(function () {
+				var $gallery = $(this);
+				var $images = $gallery.find('img');
+				var total = $images.length;
+				var loaded = 0;
+
+				if (total === 0) return;
+
+				// 初回レイアウト（画像サイズが取得できる場合はすぐ実行）
+				Masonry.layout($gallery);
+
+				// 各画像の読み込み完了時に再レイアウト
+				$images.each(function () {
+					var img = this;
+					if (img.complete && img.naturalWidth > 0) {
+						loaded++;
+						if (loaded === total) {
+							Masonry.layout($gallery);
+						}
+					} else {
+						$(img).on('load error', function () {
+							loaded++;
+							if (loaded === total) {
+								Masonry.layout($gallery);
+							}
+						});
+					}
+				});
+			});
+
+			// ウィンドウリサイズ時に再レイアウト（デバウンス付き）
+			var resizeTimer;
+			$(window).on('resize.amgMasonry', function () {
+				clearTimeout(resizeTimer);
+				resizeTimer = setTimeout(function () {
+					Masonry.relayoutAll();
+				}, 150);
+			});
+		}
+	};
 
 	/* =============================
 	 * ライトボックス
@@ -207,6 +345,9 @@
 	 * ============================= */
 
 	$(function () {
+		// Masonry レイアウト初期化
+		Masonry.init();
+
 		// ギャラリーリンクのクリックイベント
 		$(document).on('click', '.amg-link', function (e) {
 			e.preventDefault();
